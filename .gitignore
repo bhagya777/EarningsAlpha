@@ -1,0 +1,24 @@
+# --- Python & System Junk ---
+__pycache__/
+*.pyc
+.DS_Store
+.idea/
+.vscode/
+venv/
+env/
+
+# --- Heavy Data (CRITICAL to ignore) ---
+data/
+notebooks/
+*.csv
+*.xlsx
+*.pdf
+
+# --- Secrets (Safety First) ---
+.env
+config.yaml
+secrets.toml
+
+# --- Local Testing Files ---
+test_results/
+.dockerignore
