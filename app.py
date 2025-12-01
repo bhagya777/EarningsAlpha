@@ -155,7 +155,6 @@ with left_col:
         st.markdown(f"**[📄 Read Full Source Article]({st.session_state.news_link})**")
     news_input = st.text_area(
         "Earnings Transcript / News Source:",
-        value=st.session_state.news_text,
         key="news_input_box",  # allows the callback to update it
         height=2140,
         help="Paste the full text here for better accuracy."

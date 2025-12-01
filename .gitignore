@@ -6,10 +6,10 @@ __pycache__/
 .vscode/
 venv/
 env/
+*.DS_Store
 
 # --- Heavy Data (CRITICAL to ignore) ---
 data/
-notebooks/
 *.csv
 *.xlsx
 *.pdf
