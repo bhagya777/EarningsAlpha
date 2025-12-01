@@ -22,7 +22,7 @@ The model uses a dual-input system to make decisions:
 2.  **The Manager (XGBoost):** A Gradient Boosting Classifier evaluates the stock's **Historical Probability** of moving after earnings (via Target Encoding).
 
 ### 🚀 Key Logic Features
-* **Chameleon Fallback:** If a ticker is unknown/new, the model dynamically adapts its historical bias to mirror the news sentiment, ensuring responsiveness to breaking news.
+* **Cold-Start Handling:** Handles unknown tickers by assigning a calibrated "Soft Neutral" probability (0.45), preventing the model from making wild guesses on unseen stocks.
 * **Sentiment Override:** A "Safety Valve" mechanism that forces the model to ignore historical trends if the news sentiment is overwhelmingly strong (>70%), allowing it to catch "Black Swan" events.
 * **Tiered Verdicts:** Instead of binary Buy/Sell, the system outputs confidence tiers (**Strong Buy**, **Leaning Bullish**, **Neutral**, **Leaning Bearish**, **Strong Sell**) based on probability thresholds.
 
