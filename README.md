@@ -28,6 +28,15 @@ The model uses a dual-input system to make decisions:
 
 ---
 
+## 📊 Data Source
+
+The model was trained on a dataset of **18,000+ earnings call transcripts** scraped from *The Motley Fool*, covering S&P 500 companies from 2016-2020.
+
+* **Dataset:** [Motley Fool Scraped Earnings Call Transcripts (Kaggle)](https://www.kaggle.com/datasets/tpotterer/motley-fool-scraped-earnings-call-transcripts)
+* **Preprocessing:** The raw text was cleaned, chunked, and aligned with historical stock price data (via `yfinance`) to label each event as *Gain* or *Loss* based on the 1-day post-earnings price movement.
+
+---
+
 ## 📸 Demo & Performance
 
 ### 1. Strong Buy Signal (News + History Alignment)
