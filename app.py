@@ -8,6 +8,7 @@ from transformers import pipeline
 import plotly.graph_objects as go
 import matplotlib.pyplot as plt
 from wordcloud import WordCloud
+import datetime as dt
 
 # 1. SETUP & CONFIGURATION
 st.set_page_config(
@@ -106,7 +107,7 @@ def fetch_news_callback():
 
     except Exception as e:
         st.session_state.msg_type = "error"
-        st.session_state.msg_text = f"API Error: {str(e)}"
+        st.session_state.msg_text = "API Error: Can't fetch news. Please paste news below manually."
 
 
 def get_finbert_scores(text):
@@ -361,5 +362,15 @@ with right_col:
                 except Exception as e:
                     st.caption(f"Could not generate word cloud: {e}")
 
+# FOOTER
+st.markdown("---")
+st.markdown(
+    f"""
+    <div style='text-align: center; color: #000000; font-family: "Courier New", Courier, monospace; font-size: 12px;'>
+        © {dt.datetime.now().year} QuantAlloc | Built by Bhagyashree Yadav | For Educational Purposes | Not Financial Advice
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 
