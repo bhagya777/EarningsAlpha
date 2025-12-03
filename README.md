@@ -110,3 +110,15 @@ earnings-alpha/
 * **Data Source:** Currently relies on the unofficial `yfinance` API. In a production environment, this would be replaced with a paid provider (e.g., Polygon.io or Bloomberg) to guarantee uptime and prevent rate-limiting.
 * **Macro Factors:** The model focuses on *company-specific* sentiment and history. It does not currently account for macro events (Fed rate cuts, CPI data) which also drive price action.
 * **Latency:** FinBERT inference on CPU takes ~2-3 seconds. Future iterations could use **ONNX quantization** or a distilled model to reduce latency to <500ms.
+
+---
+
+## ⚖️ Disclaimer
+**For Educational Purposes Only.**
+
+This application is designed for quantitative analysis and research. It does not constitute financial advice, and the creator is not responsible for any financial losses incurred from using this tool. Always conduct your own due diligence before trading.
+
+---
+
+## 👨‍💻 Author
+Bhagyashree Yadav
