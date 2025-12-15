@@ -111,8 +111,8 @@ def fetch_news_callback():
 
 
 def get_finbert_scores(text):
-    truncated_text = text[:2000]
-    results = finbert_pipeline(truncated_text)
+    results = finbert_pipeline(text,truncation=True, 
+                                 max_length=512)
     # Parse results: [{'label': 'positive', 'score': 0.9}, ...]
     scores = {item['label']: item['score'] for item in results[0]}
     return scores.get('positive', 0), scores.get('negative', 0), scores.get('neutral', 0)
