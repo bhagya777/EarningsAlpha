@@ -192,8 +192,8 @@ with right_col:
                     t_loss = loss_enc.transform(ticker_df).iloc[0, 0]
                 except:
                     # Unknown Ticker
-                    t_gain = 0.45
-                    t_loss = 0.45
+                    t_gain = 0.25
+                    t_loss = 0.25
                     ticker_is_unknown = True
 
                 t_gain_orig = t_gain
@@ -240,30 +240,56 @@ with right_col:
 
                 # DISPLAY RESULTS
                 st.markdown("### Final Verdict")
-                STRONG_THRESH = 0.60
-                WEAK_THRESH = 0.50
-                if prob_gain > STRONG_THRESH:
-                    st.success(f"## 🚀 STRONG BUY (GAIN)\n**High Confidence: {prob_gain:.1%}**")
+                STRONG_DIR_THRESH = 0.40 # Directional Floor: Minimum P(Gain/Loss) conviction required.
+                STRONG_NEU_THRESH = 0.60 # Stability Ceiling: P(Neutral) must be below this (i.e., < 60% stability).
 
-                elif prob_gain > WEAK_THRESH and prob_gain > prob_loss:
-                    st.success(f"## ✅ LEANING BULLISH (GAIN)\n**Moderate Confidence: {prob_gain:.1%}**")
-                    st.caption("Signal is positive but below the strong threshold.")
+                # Weak Conviction Thresholds (Required for LEANING signals): 
+                WEAK_DIR_THRESH = 0.35
+                WEAK_NEU_THRESH = 0.65
 
-                elif prob_loss > STRONG_THRESH:
-                    st.error(f"## 📉 STRONG SELL (LOSS)\n**High Confidence: {prob_loss:.1%}**")
 
-                elif prob_loss > WEAK_THRESH and prob_loss > prob_gain:
-                    st.error(f"## 🔻 LEANING BEARISH (LOSS)\n**Moderate Confidence: {prob_loss:.1%}**")
+                # 1. Check for High Conviction Directional Signals
+                # Requires FOUR checks: 
+                # a) Directional probability meets minimum floor (e.g., > 40%)
+                # b) Stability is broken (P(Neutral) < 60%)
+                # c) Directional probability is higher than P(Loss)
+                # d) Directional probability is higher than P(Neutral)
+                if prob_gain > STRONG_DIR_THRESH and prob_neutral < STRONG_NEU_THRESH and prob_gain > prob_loss and prob_gain > prob_neutral:
+                    # Check if Gain is the strongest signal AND Neutral is weak
+                    st.success(f"## 🚀 STRONG BUY (GAIN)\n**High Directional Conviction** (P(Gain): {prob_gain:.1%})")
+                    st.caption("Strong signal triggered by high directional conviction AND low confidence in market stability (Neutral breakdown).")
 
-                elif prob_neutral > STRONG_THRESH:
-                    st.info(f"## 😴 PREDICTED STABLE (NEUTRAL)\n**High Confidence: {prob_neutral:.1%}**")
-                    st.caption("Model expects low volatility. No significant move detected.")
+                elif prob_loss > STRONG_DIR_THRESH and prob_neutral < STRONG_NEU_THRESH and prob_loss > prob_gain and prob_loss > prob_neutral:
+                    # Check if Loss is the strongest signal AND Neutral is weak
+                    st.error(f"## 📉 STRONG SELL (LOSS)\n**High Directional Conviction** (P(Loss): {prob_loss:.1%})")
+                    st.caption("Strong signal triggered by high directional conviction AND low confidence in market stability (Neutral breakdown).")
 
+
+                # 2. Check for Moderate Conviction Directional Signals
+                elif prob_gain > WEAK_DIR_THRESH and prob_gain > prob_loss:
+                    st.info(f"## ✅ LEANING BULLISH (GAIN)\n**Moderate Directional Conviction** (P(Gain): {prob_gain:.1%})")
+                    st.caption("Signal is positive, but confidence is low. Requires further human review.")
+
+                elif prob_loss > WEAK_DIR_THRESH and prob_loss > prob_gain:
+                    st.info(f"## 🔻 LEANING BEARISH (LOSS)\n**Moderate Directional Conviction** (P(Loss): {prob_loss:.1%})")
+                    st.caption("Signal is negative, but confidence is low. Requires further human review.")
+
+
+                # 3. Check for High Confidence Neutral (Hold)
+                elif prob_neutral > WEAK_NEU_THRESH:
+                    # If Neutral is high (e.g., > 65%), the system advises caution
+                    st.success(f"## 😴 PREDICTED STABLE (NEUTRAL)\n**High Confidence: {prob_neutral:.1%}**")
+                    st.caption("Model expects low volatility. Safest action is to HOLD.")
+
+
+                # 4. Default: Uncertain or Conflicting Signal (Manual Review)
                 else:
+                    # Calculate the most likely outcome, but warn the user it's unreliable
                     winner_label = "Gain" if prob_gain > prob_loss else "Loss"
                     winner_prob = max(prob_gain, prob_loss)
-                    st.warning(f"## 😐 NEUTRAL / HOLD\n**Uncertain Signal** (Leaning {winner_label}: {winner_prob:.1%})")
-                    st.caption(f"Model sees a {winner_label} signal, but it is too weak to trust (<{WEAK_THRESH:.0%}).")
+                    
+                    st.warning(f"## 😐 MANUAL REVIEW / HOLD\n**Conflicting/Uncertain Signal** (Most likely {winner_label}: {winner_prob:.1%})")
+                    st.caption("No single probability crossed a strong threshold. Signal is unreliable due to high noise or conflicting convictions.")
                 st.divider()
 
                 st.write("### 🧭 Signal Strength")
@@ -367,7 +393,7 @@ st.markdown("---")
 st.markdown(
     f"""
     <div style='text-align: center; color: #000000; font-family: "Courier New", Courier, monospace; font-size: 12px;'>
-        © {dt.datetime.now().year} QuantAlloc | Built by Bhagyashree Yadav | For Educational Purposes | Not Financial Advice
+        © {dt.datetime.now().year} EarningsAlpha | Built by Bhagyashree Yadav | For Educational Purposes | Not Financial Advice
     </div>
     """,
     unsafe_allow_html=True
