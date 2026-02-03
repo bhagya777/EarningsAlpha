@@ -114,7 +114,7 @@ def get_finbert_scores(text):
     results = finbert_pipeline(text,truncation=True, 
                                  max_length=512)
     # Parse results: [{'label': 'positive', 'score': 0.9}, ...]
-    scores = {item['label']: item['score'] for item in results[0]}
+    scores = {item['label'].lower(): item['score'] for item in results[0]}
     return scores.get('positive', 0), scores.get('negative', 0), scores.get('neutral', 0)
 
 # 4. MAIN UI LAYOUT
