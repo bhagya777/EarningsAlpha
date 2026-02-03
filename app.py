@@ -114,9 +114,19 @@ def get_finbert_scores(text):
     results = finbert_pipeline(text,truncation=True, 
                                  max_length=512)
     # Parse results: [{'label': 'positive', 'score': 0.9}, ...]
-    scores = {item['label'].lower(): item['score'] for item in results[0]}
-    return scores.get('positive', 0), scores.get('negative', 0), scores.get('neutral', 0)
-
+    try:
+        # results[0] should now definitely be a list of dicts
+        raw_scores = results[0]
+        if isinstance(raw_scores, dict):
+            # Fallback if only one dict is returned
+            scores = {raw_scores['label'].lower(): raw_scores['score']}
+        else:
+            scores = {item['label'].lower(): item['score'] for item in raw_scores}
+            
+        return scores.get('positive', 0.0), scores.get('negative', 0.0), scores.get('neutral', 0.0)
+    except (KeyError, TypeError, IndexError):
+        return 0.0, 0.0, 1.0
+    
 # 4. MAIN UI LAYOUT
 st.title("📈 EarningsAlpha: Event-Driven Sentiment Engine")
 st.markdown("Enter a ticker and earnings news to analyze **Market Reaction Probability**.")
